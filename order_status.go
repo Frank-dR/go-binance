@@ -18,8 +18,9 @@ var (
 	StatusRejected        = OrderStatus("REJECTED")
 	StatusExpired         = OrderStatus("EXPIRED")
 
-	TypeLimit  = OrderType("LIMIT")
-	TypeMarket = OrderType("MARKET")
+	TypeLimit    = OrderType("LIMIT")
+	TypeMarket   = OrderType("MARKET")
+	TypeStopLoss = OrderType("MARKET")
 
 	SideBuy  = OrderSide("BUY")
 	SideSell = OrderSide("SELL")
