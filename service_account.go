@@ -34,7 +34,7 @@ func (as *apiService) NewOrder(or NewOrderRequest) (*ProcessedOrder, error) {
 	if or.Price != 0 {
 		params["price"] = strconv.FormatFloat(or.Price, 'f', -1, 64)
 	}
-	if or.Type == TypeLimit {
+	if string(or.TimeInForce) != "" {
 		params["timeInForce"] = string(or.TimeInForce)
 	}
 	if or.NewClientOrderID != "" {
