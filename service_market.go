@@ -424,6 +424,38 @@ func (as *apiService) TickerAllPrices() ([]*PriceTicker, error) {
 	return tpc, nil
 }
 
+func (as *apiService) ExchangeInfo() (*ExchangeInfo, error) {
+	params := make(map[string]string)
+
+	res, err := as.request("GET", "api/v3/exchangeInfo", params, false, false)
+	if err != nil {
+		return nil, err
+	}
+	textRes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to read response from ExchangeInfo")
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		as.handleError(textRes)
+	}
+	// rawExchangeInfo := struct {
+	// 	Timezone string `json:"timezone"`
+	// 	Symbols []struct {
+	// 		Symbol             string `json:"symbol"`
+	// 		BaseAssetPrecision int    `json:"baseAssetPrecision"`
+	// 		Filters            []map[string]interface{}
+	// 	}
+	// }{}
+	exchangeInfo := ExchangeInfo{}
+	if err := json.Unmarshal(textRes, &exchangeInfo); err != nil {
+		return nil, errors.Wrap(err, "rawExchangeInfo unmarshal failed")
+	}
+
+	return &exchangeInfo, nil
+}
+
 func (as *apiService) TickerAllBooks() ([]*BookTicker, error) {
 	params := make(map[string]string)
 

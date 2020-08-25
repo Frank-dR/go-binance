@@ -31,6 +31,9 @@ type Binance interface {
 	// TickerAllBooks returns tickers for all books.
 	TickerAllBooks() ([]*BookTicker, error)
 
+	// ExchangeInfo returns a selection of the exchange information.
+	ExchangeInfo() (*ExchangeInfo, error)
+
 	// NewOrder places new order and returns ProcessedOrder.
 	NewOrder(nor NewOrderRequest) (*ProcessedOrder, error)
 	// NewOrder places testing order.
@@ -547,4 +550,58 @@ type UserDataWebsocketRequest struct {
 
 func (b *binance) UserDataWebsocket(udwr UserDataWebsocketRequest) (chan *AccountEvent, chan struct{}, error) {
 	return b.Service.UserDataWebsocket(udwr)
+}
+
+// ExchangeInfo ...
+type ExchangeInfo struct {
+	Timezone string
+	// ServerTime time.Time
+	// RateLimits      []RateLimit
+	// ExchangeFilters []ExchangeFilter
+	Symbols []SymbolInfo
+}
+
+// RateLimit ...
+type RateLimit struct {
+	RateLimitType string // "REQUEST_WEIGHT"
+	Interval      string // "MINUTE"
+	IntervalNum   int    // 1
+	Limit         int    // 1200
+}
+
+// ExchangeFilter ...
+type ExchangeFilter struct {
+}
+
+// SymbolInfo ...
+type SymbolInfo struct {
+	Symbol string // "ETHBTC"
+	// Status                     string      // "TRADING"
+	// BaseAsset                  string      // "ETH"
+	BaseAssetPrecision int // 8
+	// QuoteAsset                 string      // "BTC"
+	// QuotePrecision             int         // 8
+	// QuoteAssetPrecision        int         // 8
+	// BaseCommissionPrecision    int         // 8
+	// QuoteCommissionPrecision   int         // 8
+	// OrderTypes                 []OrderType // "MARKET"
+	// IcebergAllowed             bool        // true
+	// OcoAllowed                 bool        // true
+	// QuoteOrderQtyMarketAllowed bool        // true
+	// IsSpotTradingAllowed       bool        // true
+	// IsMarginTradingAllowed     bool        // true
+	Filters []Filter
+	// Permissions []Permission
+}
+
+// Permission ...
+type Permission struct {
+	permission string // "SPOT"
+}
+
+// Filter ...
+type Filter map[string]interface{}
+
+func (b *binance) ExchangeInfo() (*ExchangeInfo, error) {
+	return b.Service.ExchangeInfo()
 }
