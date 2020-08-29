@@ -269,6 +269,7 @@ type NewOrderRequest struct {
 	NewClientOrderID string
 	StopPrice        float64
 	IcebergQty       float64
+	RecvWindow       time.Duration
 	Timestamp        time.Time
 }
 

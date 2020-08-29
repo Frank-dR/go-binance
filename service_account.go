@@ -51,6 +51,9 @@ func (as *apiService) NewOrder(or NewOrderRequest) (*ProcessedOrder, error) {
 	if or.IcebergQty != 0 {
 		params["icebergQty"] = strconv.FormatFloat(or.IcebergQty, 'f', -1, 64)
 	}
+	if or.RecvWindow != 0 {
+		params["recvWindow"] = strconv.FormatInt(recvWindow(or.RecvWindow), 10)
+	}
 
 	res, err := as.request("POST", "api/v3/order", params, true, true)
 	if err != nil {
