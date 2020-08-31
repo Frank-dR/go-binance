@@ -74,7 +74,12 @@ func (as *apiService) NewOrder(or NewOrderRequest) (*ProcessedOrder, error) {
 		OrderID       int64   `json:"orderId"`
 		ClientOrderID string  `json:"clientOrderId"`
 		TransactTime  float64 `json:"transactTime"`
-		Fills         []Fill  `json:"fills"`
+		Fills         []struct {
+			Price           string `json:"price"`
+			QTY             string `json:"qty"`
+			Commission      string `json:"commission"`
+			CommissionAsset string `json:"commisionAsset"`
+		} `json:"fills"`
 	}{}
 	if err := json.Unmarshal(textRes, &rawOrder); err != nil {
 		return nil, errors.Wrap(err, "rawOrder unmarshal failed")
@@ -85,12 +90,29 @@ func (as *apiService) NewOrder(or NewOrderRequest) (*ProcessedOrder, error) {
 		return nil, err
 	}
 
+	fills := make([]Fill, 0)
+
+	for _, f := range rawOrder.Fills {
+		price, _ := floatFromString(f.Price)
+		qty, _ := floatFromString(f.QTY)
+		commission, _ := floatFromString(f.Commission)
+
+		fill := Fill{
+			Price:           price,
+			QTY:             qty,
+			Commission:      commission,
+			CommissionAsset: f.CommissionAsset,
+		}
+
+		fills = append(fills, fill)
+	}
+
 	return &ProcessedOrder{
 		Symbol:        rawOrder.Symbol,
 		OrderID:       rawOrder.OrderID,
 		ClientOrderID: rawOrder.ClientOrderID,
 		TransactTime:  t,
-		Fills:         rawOrder.Fills,
+		Fills:         fills,
 	}, nil
 }
 
