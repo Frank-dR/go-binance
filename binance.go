@@ -279,6 +279,15 @@ type ProcessedOrder struct {
 	OrderID       int64
 	ClientOrderID string
 	TransactTime  time.Time
+	Fills         []Fill
+}
+
+// Fill represents the price paid for (a part of) the trade made.
+type Fill struct {
+	Price           float64 `json:"price"`
+	QTY             float64 `json:"qty"`
+	Commission      float64 `json:"commission"`
+	CommissionAsset string  `json:"commisionAsset"`
 }
 
 // NewOrder places new order and returns ProcessedOrder.

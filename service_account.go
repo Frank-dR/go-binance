@@ -61,7 +61,7 @@ func (as *apiService) NewOrder(or NewOrderRequest) (*ProcessedOrder, error) {
 	}
 	textRes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to read response from Ticker/24hr")
+		return nil, errors.Wrap(err, "unable to read response from NewOrder")
 	}
 	defer res.Body.Close()
 
@@ -74,6 +74,7 @@ func (as *apiService) NewOrder(or NewOrderRequest) (*ProcessedOrder, error) {
 		OrderID       int64   `json:"orderId"`
 		ClientOrderID string  `json:"clientOrderId"`
 		TransactTime  float64 `json:"transactTime"`
+		Fills         []Fill  `json:"fills"`
 	}{}
 	if err := json.Unmarshal(textRes, &rawOrder); err != nil {
 		return nil, errors.Wrap(err, "rawOrder unmarshal failed")
@@ -89,6 +90,7 @@ func (as *apiService) NewOrder(or NewOrderRequest) (*ProcessedOrder, error) {
 		OrderID:       rawOrder.OrderID,
 		ClientOrderID: rawOrder.ClientOrderID,
 		TransactTime:  t,
+		Fills:         rawOrder.Fills,
 	}, nil
 }
 
